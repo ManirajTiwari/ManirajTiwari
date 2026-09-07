@@ -1,10 +1,11 @@
-// app/page.tsx (or your main page file)
-import First from '@/app/component/first';
+'use client';
+
+import dynamic from 'next/dynamic';
+
+const FirstComponent = dynamic(() => import('./component/first'), {
+  ssr: false,
+});
 
 export default function Page() {
-  return (
-    <main>
-      <First />
-    </main>
-  );
+  return <FirstComponent />;
 }
