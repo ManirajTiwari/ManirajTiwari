@@ -5,6 +5,8 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Center, Edges } from '@react-three/drei';
 import * as THREE from 'three';
 import Upper from './upper';
+import Pillar from './piller';
+import Stage from './stage';
 
 interface ArchProps {
   position?: [number, number, number];
@@ -48,12 +50,28 @@ function ArchWithOutline({
         <Edges threshold={15} color="black" linewidth={2} />
       </mesh>
 
+      <Stage position={[0, 0, .53]} scale={0.166} />
       {/* Upper Roof Section (Positioned directly at top arc height) */}
+
       <Upper position={[0, 2.5, 0]} width={2} height={1} depth={0.2} />
+      <Pillar position={[0, 0, 0]} scale={[0.5, 0.5, 0.4]}/>
+
       <Upper position={[0, 2.5, 2]} width={2} height={1} depth={0.2} />
+      <Pillar position={[0.6, 0, 2]} scale={[0.2, 0.5, 0.4]} />
+      <Pillar position={[-0.6, 0, 2]} scale={[0.2, 0.5, 0.4]} />
+
       <Upper position={[0, 2.5, 4]} width={2} height={1} depth={0.2} />
+      <Pillar position={[0.6, 0, 4]} scale={[0.2, 0.5, 0.4]} />
+      <Pillar position={[-0.6, 0, 4]} scale={[0.2, 0.5, 0.4]} />
+
       <Upper position={[0, 2.5, 6]} width={2} height={1} depth={0.2} />
+      <Pillar position={[0.6, 0, 6]} scale={[0.2, 0.5, 0.4]} />
+      <Pillar position={[-0.6, 0, 6]} scale={[0.2, 0.5, 0.4]} />
+
       <Upper position={[0, 2.5, 8]} width={2} height={1} depth={0.2} />
+      <Pillar position={[0.6, 0, 8]} scale={[0.2, 0.5, 0.4]} />
+      <Pillar position={[-0.6, 0, 8]} scale={[0.2, 0.5, 0.4]} />
+      
     </group>
   );
 }

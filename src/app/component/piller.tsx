@@ -1,76 +1,97 @@
-// app/component/piller.tsx
-"use client";
+'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
+import { Edges } from '@react-three/drei';
+import * as THREE from 'three';
 
-export default function Piller() {
+interface PillarProps {
+  position?: [number, number, number];
+  rotation?: [number, number, number];
+  depth?: number;
+  scale?: number | [number, number, number]; // Added scale prop
+}
+
+export default function Pillar({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  depth = 0.5,
+  scale = 0.5, // Change this value to make it smaller (e.g., 0.3 for tiny, 0.5 for half size)
+}: PillarProps) {
+  const shape = useMemo(() => {
+    const s = new THREE.Shape();
+
+    const stemWidth = 0.6;
+    const stemHeight = 4.0;
+
+    const step1W = 0.3;
+    const step1H = 0.3;
+
+    const step2W = 0.9;
+    const step2H = 0.3;
+
+    const topBlockW = 0.5;
+    const topBlockH = 0.4;
+
+    const halfStem = stemWidth / 2;
+
+    s.moveTo(-halfStem, 0);
+    s.lineTo(halfStem, 0);
+    s.lineTo(halfStem, stemHeight);
+
+    s.lineTo(halfStem + step1W, stemHeight);
+    s.lineTo(halfStem + step1W, stemHeight + step1H);
+
+    s.lineTo(halfStem + step1W + step2W, stemHeight + step1H);
+    s.lineTo(halfStem + step1W + step2W, stemHeight + step1H + step2H);
+
+    s.lineTo(
+      halfStem + step1W + step2W + topBlockW,
+      stemHeight + step1H + step2H
+    );
+    s.lineTo(
+      halfStem + step1W + step2W + topBlockW,
+      stemHeight + step1H + step2H + topBlockH
+    );
+
+    s.lineTo(
+      -(halfStem + step1W + step2W + topBlockW),
+      stemHeight + step1H + step2H + topBlockH
+    );
+
+    s.lineTo(
+      -(halfStem + step1W + step2W + topBlockW),
+      stemHeight + step1H + step2H
+    );
+    s.lineTo(
+      -(halfStem + step1W + step2W),
+      stemHeight + step1H + step2H
+    );
+
+    s.lineTo(-(halfStem + step1W + step2W), stemHeight + step1H);
+    s.lineTo(-(halfStem + step1W), stemHeight + step1H);
+
+    s.lineTo(-(halfStem + step1W), stemHeight);
+    s.lineTo(-halfStem, stemHeight);
+
+    s.lineTo(-halfStem, 0);
+
+    return s;
+  }, []);
+
+  const extrudeSettings: THREE.ExtrudeGeometryOptions = useMemo(
+    () => ({
+      steps: 1,
+      depth,
+      bevelEnabled: false,
+    }),
+    [depth]
+  );
+
   return (
-    <group>
-      {/* --- Existing Structure (Pillars 1 & 2) --- */}
-      <mesh position={[-2.5, 0, 0]}>
-        <boxGeometry args={[1, 6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-      <mesh position={[2.5, 0, 0]}>
-        <boxGeometry args={[1, 6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-      
-      {/* Outer lower step blocks */}
-      <mesh position={[-1.7, 1.8, 0]}>
-        <boxGeometry args={[0.8, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-      <mesh position={[1.7, 1.8, 0]}>
-        <boxGeometry args={[0.8, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-
-      {/* Mid step blocks */}
-      <mesh position={[-0.9, 2.2, 0]}>
-        <boxGeometry args={[0.8, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-      <mesh position={[0.9, 2.2, 0]}>
-        <boxGeometry args={[0.8, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-
-      {/* Center highest block */}
-      <mesh position={[0, 2.7, 0]}>
-        <boxGeometry args={[4, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-
-      {/* --- New Structure (Between Pillars 2 & 3) --- */}
-      <mesh position={[7.5, 0, 0]}>
-        <boxGeometry args={[1, 6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-
-      {/* Replicated Stepped Arch */}
-      <mesh position={[-1.7 + 5, 1.8, 0]}>
-        <boxGeometry args={[0.8, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-      <mesh position={[1.7 + 5, 1.8, 0]}>
-        <boxGeometry args={[0.8, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-
-      <mesh position={[-0.9 + 5, 2.2, 0]}>
-        <boxGeometry args={[0.8, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-      <mesh position={[0.9 + 5, 2.2, 0]}>
-        <boxGeometry args={[0.8, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-
-      <mesh position={[0 + 5, 2.7, 0]}>
-        <boxGeometry args={[4, 0.6, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-    </group>
+    <mesh position={position} rotation={rotation} scale={scale}>
+      <extrudeGeometry args={[shape, extrudeSettings]} />
+      <meshBasicMaterial color="#ffffff" polygonOffset polygonOffsetFactor={1} />
+      <Edges threshold={15} color="black" linewidth={2} />
+    </mesh>
   );
 }
