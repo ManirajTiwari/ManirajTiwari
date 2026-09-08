@@ -1,22 +1,32 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Edges } from '@react-three/drei';
+import { Edges, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface PillarProps {
   position?: [number, number, number];
   rotation?: [number, number, number];
   depth?: number;
-  scale?: number | [number, number, number]; // Added scale prop
+  scale?: number | [number, number, number];
 }
 
 export default function Pillar({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   depth = 0.5,
-  scale = 0.5, // Change this value to make it smaller (e.g., 0.3 for tiny, 0.5 for half size)
+  scale = 0.5,
 }: PillarProps) {
+  // Load texture from /public/sidewall.png
+  const sideTexture = useTexture('/sidewall.png');
+
+  // Configure texture wrapping and tiling
+  useMemo(() => {
+    sideTexture.wrapS = THREE.RepeatWrapping;
+    sideTexture.wrapT = THREE.RepeatWrapping;
+    sideTexture.repeat.set(1, 1);
+  }, [sideTexture]);
+
   const shape = useMemo(() => {
     const s = new THREE.Shape();
 
@@ -90,7 +100,12 @@ export default function Pillar({
   return (
     <mesh position={position} rotation={rotation} scale={scale}>
       <extrudeGeometry args={[shape, extrudeSettings]} />
-      <meshBasicMaterial color="#ffffff" polygonOffset polygonOffsetFactor={1} />
+      <meshBasicMaterial
+        map={sideTexture}
+        color="#b15f08"
+        polygonOffset
+        polygonOffsetFactor={1}
+      />
       <Edges threshold={15} color="black" linewidth={2} />
     </mesh>
   );
